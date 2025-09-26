@@ -2,10 +2,10 @@ import React, { useEffect, useState} from 'react'
 import { useTranslation,} from 'react-i18next'
 import logo from '../../assets/Logo.svg'
 export default function Home() {
-  
+
   const {t} = useTranslation()
   const [item , setItem] = useState()
-  useEffect(()=>{} , [])  
+  useEffect(()=>{} , [])   
 
 
   return <>

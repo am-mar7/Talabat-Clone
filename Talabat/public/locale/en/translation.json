@@ -4,6 +4,17 @@
     "become a partner" : "Become a Partner", 
     "hero text" : "Fast delivery of food, groceries and more",
     "hero btn": "Lets go",
-    "search place holder":"search for area , street or landmark..."
-
+    "search place holder":"search for area , street or landmark...",
+    "Sign Up" : "Sign Up",
+    "Name" : "Name",
+    "Email" : "Email",
+    "Phone number" : "Phone number" ,
+    "Password":"Password",
+    "Re-Password":"Re-Password",
+    "Login": "Login",
+    "Log out":"Log out",
+    "switch to Login" : "Already have an account ?",
+    "switch to Register" : "Don't have account ?",
+    "Register" : "Register now",
+    "Login now" : "Login now"   
 }

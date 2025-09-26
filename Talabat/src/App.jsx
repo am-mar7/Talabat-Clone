@@ -9,6 +9,9 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import { useTranslation, initReactI18next } from 'react-i18next'
 import HttpApi from 'i18next-http-backend'
 import cookie from 'js-cookie'
+import SignUp from './components/SignUp/SignUp'
+import Login from './components/Login/Login'
+
 i18next
   .use(HttpApi)
   .use(initReactI18next)
@@ -31,6 +34,8 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       { index: true, element: <Home /> },
+      { path:'Login', element: <Login/> },
+      { path:'SignUp', element: <SignUp/> },
       { path: '*', element: <NotFound /> },
     ]
   }
@@ -39,7 +44,7 @@ const router = createBrowserRouter([
 function App() {
   const {t} = useTranslation()
   const lang = cookie.get('i18next') || 'en'
-  
+
   useEffect(() =>{
     window.document.dir = i18next.dir()
   } ,[lang])
