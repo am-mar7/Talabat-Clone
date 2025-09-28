@@ -4,6 +4,8 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios'
 import { Link, useNavigate } from 'react-router-dom';
+const CLIENT_ID = import.meta.env.VITE_CLIENT_ID
+
 
 export default function SignUp() {
   const [apiError , setApiError] = useState(null)
@@ -49,11 +51,33 @@ export default function SignUp() {
   }
   
   useEffect(() =>{
-    if(localStorage.getItem('userName')){
-      console.log('a7a');    
-      navigator('/')
-    }  
+    if (JSON.parse(localStorage.getItem("userName")) || JSON.parse(localStorage.getItem("userToken"))) {
+      navigator("/");
+    }
   } , [])
+
+  useEffect(() => {
+    /* global google */
+    if (window.google) {
+      google.accounts.id.initialize({
+        client_id: CLIENT_ID,
+        callback: handleCredentialResponse,
+      });
+
+      google.accounts.id.renderButton(
+        document.getElementById("g_id_signin"),
+        { theme: "outline", size: "large" , text: t('Login now')}
+      );
+    }
+  }, []);
+
+  function handleCredentialResponse(response) {
+    // console.log("Encoded JWT ID token: " + response.credential);
+    // send token to backend for verification
+    localStorage.setItem('userToken',JSON.stringify(response.credential))
+    console.log(response);   
+    navigator('/') 
+  }
   return (
     <>
       <div className="py-10">
@@ -62,6 +86,14 @@ export default function SignUp() {
           className="w-[80%] sm:w-[70%] lg:w-[40%] mx-auto flex flex-col gap-6"
         >
           <h1 className='text-3xl text-orange-500 text-center'>{t('Register')}</h1>
+
+          <div id="g_id_signin" className="w-full  flex justify-center text-5xl"></div>
+          <div className="flex items-center gap-4">
+            <div className="flex-1 h-px bg-gray-300"></div>
+            <span className="text-gray-500 text-sm">{t("or")}</span>
+            <div className="flex-1 h-px bg-gray-300"></div>
+          </div>
+
           {/* Name */}
           <div className="relative">
             <input

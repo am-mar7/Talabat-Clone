@@ -1,74 +1,117 @@
-import React, { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { GoogleLogin } from '@react-oauth/google';
+import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+const CLIENT_ID = import.meta.env.VITE_CLIENT_ID
 
-export default function Login() { 
-  const [apiError , setApiError] = useState(null)
-  , [loading , setLoading] = useState(false)
-  , {t} = useTranslation()
-  , navigator = useNavigate()
-  , yupSchema = Yup.object().shape({
-    email : Yup.string().email('email is invaild').required('email is required'),
-    password : Yup.string().required('password is required'),
-  })
+export default function Login() {
+  const [apiError, setApiError] = useState(null),
+    [loading, setLoading] = useState(false),
+    { t } = useTranslation(),
+    navigator = useNavigate(),
+    yupSchema = Yup.object().shape({
+      email: Yup.string()
+        .email("email is invaild")
+        .required("email is required"),
+      password: Yup.string().required("password is required"),
+    }),
 
-  , formik = useFormik({
-    initialValues:{
-      email :'',
-      password:'',
-    },
-    onSubmit:handleLogin,
-    validationSchema:yupSchema
-  })  
-  function handleLogin(values){
-    setLoading(true)
-    axios.post('https://ecommerce.routemisr.com/api/v1/auth/signin' , values )
-    .then((response) => {
-      localStorage.setItem('userToken' , response.data.token)
-      localStorage.setItem('userName' , values.name)    
-      navigator('/')
-    })
-    .catch((apiResponse) => {
-      setApiError(apiResponse?.response?.data?.message)
-      setLoading(false)   
-    }) 
+    formik = useFormik({
+      initialValues: {
+        email: "",
+        password: "",
+      },
+      onSubmit: handleLogin,
+      validationSchema: yupSchema,
+    });
+
+  function handleLogin(values) {
+    setLoading(true);
+    axios
+      .post("https://ecommerce.routemisr.com/api/v1/auth/signin", values)
+      .then((response) => {
+        localStorage.setItem("userToken", response.data.token);
+        localStorage.setItem("userName", values.name);
+        navigator("/");
+      })
+      .catch((apiResponse) => {
+        setApiError(apiResponse?.response?.data?.message);
+        setLoading(false);
+      });
   }
-  useEffect(() =>{
-    if(localStorage.getItem('userName')){
-      navigator('/')
-    }  
-  } , [])
-  return <>
-    <div className="py-10">
-      <form onSubmit={formik.handleSubmit} className="w-[80%] sm:w-[70%] lg:w-[40%] mx-auto flex flex-col gap-6">
-      <h1 className='text-3xl text-orange-500 text-center'>{t('Login now')}</h1>
-        <div className="relative">
-          <input
-            name="email"
-            value={formik.values.email}
-            onBlur={formik.handleBlur}
-            onChange={formik.handleChange}
-            type="email"
-            id="floating-phone-email"
-            className="block py-2.5 ps-6 pe-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
-            placeholder=" "
-          />
-          <label
-            htmlFor="floating-phone-email"
-            className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 peer-focus:text-orange-600"
-          >
-            {t('Email')}
-          </label>
-          {formik.touched.email && formik.errors.email && (
-            <p className="text-red-500 text-xs">{formik.errors.email}</p>
-          )}
-        </div>
 
-        <div className="relative">
+  useEffect(() => {
+    if (JSON.parse(localStorage.getItem("userName")) || JSON.parse(localStorage.getItem("userToken"))) {
+      navigator("/");
+    }
+  }, []);
+  // belongs to login with google 
+  useEffect(() => {
+    /* global google */
+    if (window.google) {
+      google.accounts.id.initialize({
+        client_id: CLIENT_ID,
+        callback: handleCredentialResponse,
+      });
+
+      google.accounts.id.renderButton(
+        document.getElementById("g_id_signin"),
+        { theme: "outline", size: "large" , text: t('Login now')}
+      );
+    }
+  }, []);
+
+  function handleCredentialResponse(response) {
+    // console.log("Encoded JWT ID token: " + response.credential);
+    // send token to backend for verification
+    localStorage.setItem('userToken',JSON.stringify(response.credential))
+    console.log(response);  
+    navigator('/')   
+  }
+
+  return (
+    <>
+      <div className="py-10">
+        <form
+          onSubmit={formik.handleSubmit}
+          className="w-[80%] sm:w-[70%] lg:w-[40%] mx-auto flex flex-col gap-6"
+        >
+          <h1 className="text-3xl text-orange-500 text-center">
+            {t("Login now")}
+          </h1>
+
+          <div id="g_id_signin" className="w-full  flex justify-center text-5xl"></div>
+          <div className="flex items-center gap-4">
+            <div className="flex-1 h-px bg-gray-300"></div>
+            <span className="text-gray-500 text-sm">{t("or")}</span>
+            <div className="flex-1 h-px bg-gray-300"></div>
+          </div>
+
+          <div className="relative">
+            <input
+              name="email"
+              value={formik.values.email}
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
+              type="email"
+              id="floating-phone-email"
+              className="block py-2.5 ps-6 pe-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
+              placeholder=" "
+            />
+            <label
+              htmlFor="floating-phone-email"
+              className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 peer-focus:text-orange-600"
+            >
+              {t("Email")}
+            </label>
+            {formik.touched.email && formik.errors.email && (
+              <p className="text-red-500 text-xs">{formik.errors.email}</p>
+            )}
+          </div>
+
+          <div className="relative">
             <input
               name="password"
               value={formik.values.password}
@@ -83,31 +126,39 @@ export default function Login() {
               htmlFor="floating-phone-password"
               className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 peer-focus:text-orange-600"
             >
-              {t('Password')}
+              {t("Password")}
             </label>
             {formik.touched.password && formik.errors.password && (
               <p className="text-red-500 text-xs">{formik.errors.password}</p>
             )}
-        </div>
+          </div>
 
-        <div className="w-full flex justify-center gap-2 items-center">
+          <div className="w-full flex justify-center gap-2 items-center">
             <button
-            type="submit"
-            className="bg-orange-500 text-white py-2 px-4 min-w-[150px] w-1/4 rounded-lg hover:bg-orange-600 cursor-pointer"
-          >
-            {loading?<i className='fas fa-spinner fa-spin'></i>:null}{t('Login')}
-          </button>
-        </div>
+              type="submit"
+              className="bg-orange-500 text-white py-2 px-4 min-w-[150px] w-1/4 rounded-lg hover:bg-orange-600 cursor-pointer"
+            >
+              {loading ? <i className="fas fa-spinner fa-spin"></i> : null}
+              {t("Login")}
+            </button>
+          </div>
 
-        <div className='flex gap-2.5 my-2'>
-            <p className='text-slate-600'>{t('switch to Register')}</p>
-            <Link className='text-orange-500 hover:text-orange-600' to="/SignUp">{t('Sign Up')}</Link>
-        </div>
-        {apiError && <p className='bg-red-300 text-red-600 p-3'>{apiError}</p>}
-      </form>
+          <div className="flex gap-2.5 my-2">
+            <p className="text-slate-600">{t("switch to Register")}</p>
+            <Link
+              className="text-orange-500 hover:text-orange-600"
+              to="/SignUp"
+            >
+              {t("Sign Up")}
+            </Link>
+          </div>
+          {apiError && (
+            <p className="bg-red-300 text-red-600 p-3">{apiError}</p>
+          )}
+        </form>
 
-      {/* <GoogleLogin onSuccess={(res) =>{console.log(res);}}/> */} 
-    </div>
-  </>
-  
+        {/* <GoogleLogin onSuccess={(res) =>{console.log(res);}}/> */}
+      </div>
+    </>
+  );
 }

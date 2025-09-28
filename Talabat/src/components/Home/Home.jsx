@@ -4,7 +4,7 @@ import logo from "../../assets/Logo.svg";
 import { LocationContext } from "../../../Context/LocationContext";
 import axios from "axios";
 import { Trie } from "../../utils/Trie";
-const key = "4776ee1bb2msh82c3fb00001f939p155d29jsn6e156f590dda";
+const key = import.meta.env.VITE_API_KEY
 
 export default function Home() {
   const { t } = useTranslation(),
@@ -18,7 +18,8 @@ export default function Home() {
       "x-rapidapi-host": "talabat.p.rapidapi.com",
       "x-rapidapi-key": key,
     };
-
+ 
+    
   useEffect(() => {
     if (detailed?.message === "address_ready") {
       setQuery(detailed?.address);

@@ -10,8 +10,8 @@ export default function Navbar() {
   cookie.get('i18next') === 'en' ? lng = 'ar' : lng = 'en'
   const [lang , setLang] = useState(lng)
   ,{t} = useTranslation()
-  , userName = localStorage.getItem('userName')
-
+  , userName = JSON.parse(localStorage.getItem('userName'))
+  , token = JSON.parse(localStorage.getItem('userToken'))
   function handleLogOut(){
     localStorage.removeItem('userName')
     localStorage.removeItem('userToken')
@@ -33,7 +33,7 @@ export default function Navbar() {
               isOpen && 
               <div id="dropdown" className="absolute z-30 top-14 left-[-135%]  bg-white text-orange-500 divide-y divide-gray-100 rounded-lg shadow-sm w-44">
                 <ul className="text-sm  " aria-labelledby="dropdownDefaultButton">
-                  {userName ?
+                  {userName  || token ?
                   <li onClick={() => {handleLogOut()}}>
                     <a href="#" className="block px-4 pb-3 pt-2 hover:bg-orange-600 hover:text-white">{t('Log out')}</a>
                   </li>

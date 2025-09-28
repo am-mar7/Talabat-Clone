@@ -55,7 +55,6 @@ export default function LocationContextProvider({ children }) {
       console.log(' we solve it again');      
       return
     }
-
     setDetailed(prev => ({ ...prev, message: 'requesting_permission' }));
 
     navigator.geolocation.getCurrentPosition(async (pos) => {
