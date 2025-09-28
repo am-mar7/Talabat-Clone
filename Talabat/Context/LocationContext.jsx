@@ -12,19 +12,28 @@ export default function LocationContextProvider({ children }) {
   const [detailed, setDetailed] = useState({ message: 'idle' });
 
   useEffect(() => {
+    if (localStorage.getItem('approx')){
+      setApprox(JSON.parse(localStorage.getItem('approx')));
+      console.log('we solve it' , JSON.parse(localStorage.getItem('approx')));      
+      return
+    }
+    console.log('a7a');    
     let mounted = true;
-    // if(localStorage.getItem('approxLocation')){
-    //   setApprox({loading:false ,data:localStorage.getItem('approxLocation') , error : null})
-    //   return
-    // }
     fetch('https://ipapi.co/json/')
       .then(response => response.json())
       .then(data => {
         if (!mounted) return;
         setApprox({ loading: false, data, error: null });
+        // console.log('data' , { loading: false, data, error: null })        
+        localStorage.setItem('approx' , JSON.stringify({ loading: false, data, error: null }))
       })
       .catch(() => {
-        if (!mounted) return;
+        if (!mounted) return;    if (localStorage.getItem('approx')){
+          setApprox(localStorage.getItem('approx'));
+          console.log('we solve it' , approx);      
+          return
+        }
+        console.log(approx);        
         setApprox({ loading: false, data: null, error: 'Failed to fetch approximate location' });
       });
 
@@ -36,6 +45,15 @@ export default function LocationContextProvider({ children }) {
       // keep detailed an object
       setDetailed(prev => ({ ...prev, message: "browser doesn't support geolocation" }));
       return;
+    }
+    if (localStorage.getItem('userArddess')){
+      setDetailed(prev => ({
+        ...prev,
+        message: 'address_ready',
+        address: localStorage.getItem('userArddess')
+      }));
+      console.log(' we solve it again');      
+      return
     }
 
     setDetailed(prev => ({ ...prev, message: 'requesting_permission' }));
@@ -72,6 +90,7 @@ export default function LocationContextProvider({ children }) {
           message: 'address_ready',
           address: pretty
         }));
+        localStorage.setItem('userAddress' , pretty)
       } catch (e) {
         setDetailed(prev => ({
           ...prev,

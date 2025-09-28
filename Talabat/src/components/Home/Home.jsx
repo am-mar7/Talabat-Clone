@@ -9,10 +9,9 @@ const key = "4776ee1bb2msh82c3fb00001f939p155d29jsn6e156f590dda";
 export default function Home() {
   const { t } = useTranslation(),
     [areaDetails, setAreaDetails] = useState(null),
-    { detailed, getDetailed } = useContext(LocationContext),
+    {detailed, getDetailed } = useContext(LocationContext),
     [query, setQuery] = useState(""),
     [adressLoading, setAdressLoading] = useState(false),
-    country = localStorage.getItem("country") || "Egypt",
     [trie] = useState(() => new Trie()),
     [suggestions, setSuggestions] = useState([]),
     headers = {
@@ -21,13 +20,20 @@ export default function Home() {
     };
 
   useEffect(() => {
-    if (detailed?.message == "address_ready") {
+    if (detailed?.message === "address_ready") {
       setQuery(detailed?.address);
+      localStorage.setItem('userArddess' , detailed?.address)
       setAdressLoading(false);
     }
-    // console.log(key)
-    if (!areaDetails) getAreaDetails();
+    else if (detailed?.message === 'address_failed'){
+      // setQuery('failed to find your location');
+      console.log('some thing went wrong');      
+      setAdressLoading(false);
+    }
+    console.log(detailed);    
+    // if (!areaDetails) getAreaDetails();
   }, [detailed]);
+
   useEffect(() => {
     console.log(areaDetails);
     if (areaDetails) {
@@ -35,16 +41,17 @@ export default function Home() {
       console.log(trie);
     }
   }, [areaDetails, trie]);
+
   async function getAreaDetails() {
-    try {
-      const { data } = await axios.get(
-        `https://talabat.p.rapidapi.com/area-details?country=${country}`,
-        { headers }
-      );
-      setAreaDetails(data.data.areas);
-    } catch (error) {
-      console.error("Failed to fetch area details:", error);
-    }
+    // try {
+    //   const { data } = await axios.get(
+    //     `https://talabat.p.rapidapi.com/area-details?country=${country}`,
+    //     { headers }
+    //   );
+    //   setAreaDetails(data.data.areas);
+    // } catch (error) {
+    //   console.error("Failed to fetch area details:", error);
+    // }
   }
   function showUserAdress() {
     setAdressLoading(true);

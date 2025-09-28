@@ -9,7 +9,6 @@ export default function ProtectedRoute({ children }) {
     'Kuwait', 'KSA', 'Bahrain', 'UAE',
     'Oman', 'Qatar', 'Jordan', 'Egypt'
   ];
-  return <>{children}</>;
   
   // still loading? show loader
   if (approx.loading) {
