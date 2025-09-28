@@ -4,6 +4,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { GoogleLogin } from '@react-oauth/google';
 
 export default function Login() { 
   const [apiError , setApiError] = useState(null)
@@ -38,7 +39,6 @@ export default function Login() {
   }
   useEffect(() =>{
     if(localStorage.getItem('userName')){
-      console.log('a7a');    
       navigator('/')
     }  
   } , [])
@@ -105,6 +105,8 @@ export default function Login() {
         </div>
         {apiError && <p className='bg-red-300 text-red-600 p-3'>{apiError}</p>}
       </form>
+
+      {/* <GoogleLogin onSuccess={(res) =>{console.log(res);}}/> */} 
     </div>
   </>
   
