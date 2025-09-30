@@ -1,15 +1,19 @@
 // LocationContextProvider.jsx
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, use, useContext, useEffect, useState } from 'react';
 
 export const LocationContext = createContext({
   approx: { loading: true, data: null, error: null },
   detailed: { message: 'idle' },
+  
   getDetailed: () => {}
 });
 
 export default function LocationContextProvider({ children }) {
-  const [approx, setApprox] = useState({ loading: true, data: null, error: null });
-  const [detailed, setDetailed] = useState({ message: 'idle' });
+  const [approx, setApprox] = useState({ loading: true, data: null, error: null }),
+  [detailed, setDetailed] = useState({ message: 'idle' }),
+  [country , setCountry] = useState('Egypt'),
+  [city , setCity] = useState('cairo')
+  
 
   useEffect(() => {
     if (localStorage.getItem('approx')){
@@ -17,13 +21,15 @@ export default function LocationContextProvider({ children }) {
       console.log('we solve it' , JSON.parse(localStorage.getItem('approx')));      
       return
     }
-    console.log('a7a');    
+    // console.log('a7a');    
     let mounted = true;
     fetch('https://ipapi.co/json/')
       .then(response => response.json())
       .then(data => {
         if (!mounted) return;
         setApprox({ loading: false, data, error: null });
+        console.log('approx is fucking wrong',data);
+        
         // console.log('data' , { loading: false, data, error: null })        
         localStorage.setItem('approx' , JSON.stringify({ loading: false, data, error: null }))
       })
@@ -46,21 +52,27 @@ export default function LocationContextProvider({ children }) {
       setDetailed(prev => ({ ...prev, message: "browser doesn't support geolocation" }));
       return;
     }
+    // reducing api requset so rappid api does not block us for the 5-th time
     if (localStorage.getItem('userArddess')){
       setDetailed(prev => ({
         ...prev,
         message: 'address_ready',
         address: localStorage.getItem('userArddess')
       }));
+      setCity(JSON.parse(localStorage.getItem('city')))
+      setCountry(JSON.parse(localStorage.getItem('country')))
+      console.log(city , country);
+      
       console.log(' we solve it again');      
       return
     }
+
     setDetailed(prev => ({ ...prev, message: 'requesting_permission' }));
 
     navigator.geolocation.getCurrentPosition(async (pos) => {
-      const lat = pos.coords.latitude;
-      const lon = pos.coords.longitude;
-      const acc = pos.coords.accuracy;
+      const lat = pos.coords.latitude,
+      lon = pos.coords.longitude,
+      acc = pos.coords.accuracy;
 
       // update with coordinates (keep it an object)
       setDetailed(prev => ({
@@ -78,6 +90,11 @@ export default function LocationContextProvider({ children }) {
         );
         const j = await res.json();
         const addr = j.address || {};
+        console.log(addr);
+        setCountry(addr.country)
+        setCity(addr.city || addr.town || addr.village)
+        localStorage.setItem('city' ,JSON.stringify(addr.city))
+        localStorage.setItem('country' ,JSON.stringify(addr.country))
         const pretty = [
           addr.road, addr.neighbourhood, addr.suburb,
           addr.city || addr.town || addr.village,
@@ -107,7 +124,7 @@ export default function LocationContextProvider({ children }) {
   };
 
   return (
-    <LocationContext.Provider value={{ approx, detailed, getDetailed }}>
+    <LocationContext.Provider value={{ approx, detailed, getDetailed , country , city}}>
       {children}
     </LocationContext.Provider>
   );

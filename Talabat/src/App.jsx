@@ -15,6 +15,9 @@ import LocationContextProvider from '../Context/LocationContext'
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute'
 import '@fortawesome/fontawesome-free/css/all.min.css'
 import NotProvided from './components/NotProvided/NotProvided'
+import CategoryDetails from './components/CategoryDetails/CategoryDetails'
+
+
 
 i18next
   .use(HttpApi)
@@ -40,7 +43,9 @@ const router = createBrowserRouter([
       { index: true, element: <Home/>  },
       { path:'Login', element: <Login/>  },
       { path:'SignUp', element: <SignUp/> },
+      { path:'Category/:name/:id', element: <CategoryDetails/> },
       { path: '*', element: <NotFound />},
+      
     ]
   },
   {path:'NotProvided' , element: <NotProvided/>}
@@ -54,12 +59,11 @@ function App() {
     window.document.dir = i18next.dir()
   } ,[lang])
   return (
-    // <GoogleOAuthProvider clientId={CLIENT_ID}>
       <LocationContextProvider>
         <RouterProvider router={router}>        
         </RouterProvider>
       </LocationContextProvider>
-    // </GoogleOAuthProvider>
+
 
 
     // <div>{t('welcome')}</div>

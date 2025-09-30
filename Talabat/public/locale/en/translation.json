@@ -16,5 +16,48 @@
     "switch to Login" : "Already have an account ?",
     "switch to Register" : "Don't have account ?",
     "Register" : "Register now",
-    "Login now" : "Login now"   
+    "Login now" : "Login now" ,
+    "categories": {
+        "food": {
+        "title": "Order Food",
+        "description": "Craving something delicious? Explore a wide variety of meals from your favorite restaurants delivered hot & fresh.",
+        "cta": "Order Now",
+        "alt": "food"
+        },
+        "flowers": {
+        "title": "Order Flowers",
+        "description": "Brighten someone’s day with a fresh bouquet. Choose from roses, lilies, and more — delivered to their doorstep.",
+        "cta": "Shop Now",
+        "alt": "flowers"
+        },
+        "medicine": {
+        "title": "Order Medicine",
+        "description": "Get your essential medicines and health products delivered quickly and safely without leaving your home.",
+        "cta": "Shop Now",
+        "alt": "medicine"
+        },
+        "groceries": {
+        "title": "Order Groceries",
+        "description": "From fresh fruits to daily essentials, stock your kitchen with groceries delivered in minutes.",
+        "cta": "Shop Now",
+        "alt": "groceries"
+        },
+        "donations": {
+        "title": "Donations",
+        "description": "Support a good cause by donating to trusted charities. Every contribution makes a difference.",
+        "cta": "Donate Now",
+        "alt": "donations"
+        }
+    },
+  
+    "marketing": {
+        "reach_headline": "Reach more customers & achieve remarkable growth. Write your next chapter with talabat",
+        "join_cta": "Join us now"
+    },
+    "careers": {
+        "grow_headline": "Grow in your career",
+        "description": "Join an amazing bunch of people who work behind the scenes to make talabat happen.",
+        "cta": "See open job opportunities"
+    }
+  
 }

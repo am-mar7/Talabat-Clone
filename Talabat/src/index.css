@@ -1,1 +1,12 @@
 @import "tailwindcss";
+
+
+
+    .container {
+      @apply mx-auto px-4 sm:px-6 lg:px-8;
+    }
+    .row {
+      @apply flex flex-wrap -mx-2; /* negative margins to offset column padding */
+    }
+  
+
